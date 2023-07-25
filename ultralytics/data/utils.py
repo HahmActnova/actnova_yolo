@@ -390,6 +390,9 @@ class HUBDatasetStats():
             elif self.task == 'pose':
                 n = labels['keypoints'].shape[0]
                 coordinates = np.concatenate((labels['bboxes'], labels['keypoints'].reshape(n, -1)), 1)
+            elif self.task == 'actnova':
+                n = labels['keypoints'].shape[0]
+                coordinates = np.concatenate((labels['bboxes'], labels['keypoints'].reshape(n, -1)), 1)
             else:
                 raise ValueError('Undefined dataset task.')
             zipped = zip(labels['cls'], coordinates)
@@ -403,7 +406,7 @@ class HUBDatasetStats():
             dataset = YOLODataset(img_path=self.data[split],
                                   data=self.data,
                                   use_segments=self.task == 'segment',
-                                  use_keypoints=self.task == 'pose')
+                                  use_keypoints=self.task in ['pose', 'actnova'])
             x = np.array([
                 np.bincount(label['cls'].astype(int).flatten(), minlength=self.data['nc'])
                 for label in tqdm(dataset.labels, total=len(dataset), desc='Statistics')])  # shape(128x80)
