@@ -30,7 +30,7 @@ setup(
     url='https://github.com/HahmActnova/actnova_yolo',
     project_urls={
         'Bug Reports': 'https://github.com/ultralytics/ultralytics/issues',
-        'Source': 'https://github.com/HahmActnova/actnova_yolo/ultralytics'},
+        'Source': 'https://github.com/HahmActnova/actnova_yolo'},
     author='Ultralytics',
     author_email='hello@ultralytics.com',
     packages=find_packages(),  # required

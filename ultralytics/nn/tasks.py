@@ -805,6 +805,9 @@ def guess_model_task(model):
             return 'segment'
         if m == 'pose':
             return 'pose'
+        if m == 'actnova':
+            return 'actnova'
+        
 
     # Guess from model cfg
     if isinstance(model, dict):
