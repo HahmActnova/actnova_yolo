@@ -12,7 +12,7 @@ from ultralytics.utils.metrics import OKS_SIGMA, PoseMetrics, box_iou, kpt_iou
 from ultralytics.utils.plotting import output_to_target, plot_images
 
 
-class PoseValidator(DetectionValidator):
+class ActnovaValidator(DetectionValidator):
 
     def __init__(self, dataloader=None, save_dir=None, pbar=None, args=None, _callbacks=None):
         """Initialize a 'PoseValidator' object with custom parameters and assigned attributes."""
@@ -216,7 +216,7 @@ def val(cfg=DEFAULT_CFG, use_python=False):
         from ultralytics import YOLO
         YOLO(model).val(**args)
     else:
-        validator = PoseValidator(args=args)
+        validator = ActnovaValidator(args=args)
         validator(model=args['model'])
 
 

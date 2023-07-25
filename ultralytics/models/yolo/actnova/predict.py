@@ -5,7 +5,7 @@ from ultralytics.models.yolo.detect.predict import DetectionPredictor
 from ultralytics.utils import DEFAULT_CFG, ROOT, ops
 
 
-class PosePredictor(DetectionPredictor):
+class ActnovaPredictor(DetectionPredictor):
 
     def __init__(self, cfg=DEFAULT_CFG, overrides=None, _callbacks=None):
         super().__init__(cfg, overrides, _callbacks)
@@ -50,7 +50,7 @@ def predict(cfg=DEFAULT_CFG, use_python=False):
         from ultralytics import YOLO
         YOLO(model)(**args)
     else:
-        predictor = PosePredictor(overrides=args)
+        predictor = ActnovaPredictor(overrides=args)
         predictor.predict_cli()
 
 
