@@ -19,12 +19,12 @@ def get_version():
 
 
 setup(
-    name='ultralytics',  # name of pypi package
+    name='actnova-yolo',  # name of pypi package
     version=get_version(),  # version of pypi package
     python_requires='>=3.7',
     license='AGPL-3.0',
     description=('Ultralytics YOLOv8 for SOTA object detection, multi-object tracking, instance segmentation, '
-                 'pose estimation and image classification.'),
+                 'pose estimation and image classification. modified for Actnova by HahmDY'),
     long_description=README,
     long_description_content_type='text/markdown',
     url='https://github.com/ultralytics/ultralytics',

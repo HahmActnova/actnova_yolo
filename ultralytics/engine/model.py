@@ -7,7 +7,7 @@ from typing import Union
 from ultralytics.cfg import get_cfg
 from ultralytics.engine.exporter import Exporter
 from ultralytics.models import yolo  # noqa
-from ultralytics.nn.tasks import (ClassificationModel, DetectionModel, PoseModel, SegmentationModel,
+from ultralytics.nn.tasks import (ClassificationModel, DetectionModel, PoseModel, SegmentationModel, ActnovaModel,
                                   attempt_load_one_weight, guess_model_task, nn, yaml_model_load)
 from ultralytics.utils import (DEFAULT_CFG, DEFAULT_CFG_DICT, DEFAULT_CFG_KEYS, LOGGER, RANK, ROOT, callbacks,
                                is_git_dir, yaml_load)
@@ -25,7 +25,8 @@ TASK_MAP = {
     'segment': [
         SegmentationModel, yolo.segment.SegmentationTrainer, yolo.segment.SegmentationValidator,
         yolo.segment.SegmentationPredictor],
-    'pose': [PoseModel, yolo.pose.PoseTrainer, yolo.pose.PoseValidator, yolo.pose.PosePredictor]}
+    'pose': [PoseModel, yolo.pose.PoseTrainer, yolo.pose.PoseValidator, yolo.pose.PosePredictor],
+    'actnova': [ActnovaModel, yolo.actnova.ActnovaTrainer, yolo.actnova.ActnovaValidator, yolo.actnova.ActnovaPredictor]}
 
 
 class YOLO:
