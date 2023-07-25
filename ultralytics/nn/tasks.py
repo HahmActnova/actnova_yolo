@@ -332,6 +332,28 @@ class PoseModel(DetectionModel):
             f'WARNING ⚠️ {self.__class__.__name__} has not supported augment inference yet! Now using single-scale inference instead.'
         )
         return self._predict_once(x)
+    
+class ActnovaModel(DetectionModel):
+    """YOLOv8 pose model."""
+
+    def __init__(self, cfg='yolov8n-pose.yaml', ch=3, nc=None, data_kpt_shape=(None, None), verbose=True):
+        """Initialize YOLOv8 Pose model."""
+        if not isinstance(cfg, dict):
+            cfg = yaml_model_load(cfg)  # load model YAML
+        if any(data_kpt_shape) and list(data_kpt_shape) != list(cfg['kpt_shape']):
+            LOGGER.info(f"Overriding model.yaml kpt_shape={cfg['kpt_shape']} with kpt_shape={data_kpt_shape}")
+            cfg['kpt_shape'] = data_kpt_shape
+        super().__init__(cfg=cfg, ch=ch, nc=nc, verbose=verbose)
+
+    def init_criterion(self):
+        return v8PoseLoss(self)
+
+    def _predict_augment(self, x):
+        """Perform augmentations on input image x and return augmented inference."""
+        LOGGER.warning(
+            f'WARNING ⚠️ {self.__class__.__name__} has not supported augment inference yet! Now using single-scale inference instead.'
+        )
+        return self._predict_once(x)
 
 
 class ClassificationModel(BaseModel):

@@ -27,11 +27,10 @@ setup(
                  'pose estimation and image classification. modified for Actnova by HahmDY'),
     long_description=README,
     long_description_content_type='text/markdown',
-    url='https://github.com/ultralytics/ultralytics',
+    url='https://github.com/HahmActnova/actnova_yolo',
     project_urls={
         'Bug Reports': 'https://github.com/ultralytics/ultralytics/issues',
-        'Funding': 'https://ultralytics.com',
-        'Source': 'https://github.com/ultralytics/ultralytics'},
+        'Source': 'https://github.com/HahmActnova/actnova_yolo'},
     author='Ultralytics',
     author_email='hello@ultralytics.com',
     packages=find_packages(),  # required
