@@ -501,18 +501,12 @@ def RMSE(true, pred):
     pred_kpts: (array[N, 51])
     tkpts: (array[N, 51])
     """
-    acc = 0
+    diff = true - pred
+    diff_squared = diff ** 2
+    mse = diff_squared.mean()
+    rmse = np.sqrt(mse)
     
-    N = np.min(np.shape(true)[0], np.shape(pred)[0])
-    kpts = np.min(np.shape(true)[1], np.shape(pred)[1])
-    
-    for i in range(N):
-        for j in range(kpts):
-            if j%3 != 0:
-                acc += (pred[i, j] - true[i, j]) ** 2
-    acc /= N
-    
-    return [np.sqrt(acc)]
+    return [rmse]
     
 class Metric(SimpleClass):
     """
