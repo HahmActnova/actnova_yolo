@@ -506,7 +506,7 @@ def RMSE(true, pred):
     mse = np.min(d, axis=1) / np.shape(true)[-1]
     rmse = np.sqrt(mse)
     
-    return [np.mean(rmse)]
+    return [np.mean(rmse).item()]
     
 class Metric(SimpleClass):
     """
