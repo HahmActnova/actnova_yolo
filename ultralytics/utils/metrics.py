@@ -501,11 +501,12 @@ def RMSE(true, pred):
     pred_kpts: (array[N, 51])
     tkpts: (array[N, 51])
     """
-    diff = true[:, None] - pred  # Broadcast to compare all combinations
-    squared_diff = torch.sum(diff ** 2, dim=-1)  # Calculate squared differences for each keypoint
-    rmse = torch.sqrt(squared_diff).mean(-1)  # Calculate RMSE for each combination of keypoints
-    return [rmse]
-
+    d = (true[:, None, :, 0] - pred[..., 0]) ** 2 + (true[:, None, :, 1] - pred[..., 1]) ** 2 # (30709, 321, 12)
+    d = d.sum(-1)
+    mse = np.min(d, axis=1) / np.shape(true)[-1]
+    rmse = np.sqrt(mse)
+    
+    return [np.mean(rmse)]
     
 class Metric(SimpleClass):
     """
