@@ -26,6 +26,7 @@ class ActnovaValidator(DetectionValidator):
         batch['keypoints'] = batch['keypoints'].to(self.device).float()
         return batch
 
+    # Modify this part to add metrics
     def get_desc(self):
         """Returns description of evaluation metrics in string format."""
         return ('%22s' + '%11s' * 11) % ('Class', 'Images', 'Instances', 'Box(P', 'R', 'mAP50', 'mAP50-95)', 'Pose(P',
@@ -97,9 +98,14 @@ class ActnovaValidator(DetectionValidator):
                 correct_kpts = self._process_batch(predn[:, :6], labelsn, pred_kpts, tkpts)
                 if self.args.plots:
                     self.confusion_matrix.process_batch(predn, labelsn)
+                
+            """
+            pred_kpts: (array[N, 51])
+            tkpts: (array[N, 51])
+            """
 
-            # Append correct_masks, correct_boxes, pconf, pcls, tcls
-            self.stats.append((correct_bboxes, correct_kpts, pred[:, 4], pred[:, 5], cls.squeeze(-1)))
+            # correct_boxes, correct_kpts, pconf, pcls, tcls, GT_kpts, pred_kpts
+            self.stats.append((correct_bboxes, correct_kpts, pred[:, 4], pred[:, 5], cls.squeeze(-1), pred_kpts, tkpts))
 
             # Save
             if self.args.save_json:
@@ -117,6 +123,7 @@ class ActnovaValidator(DetectionValidator):
             gt_kpts (array[N, 51])
         Returns:
             correct (array[N, 10]), for 10 IoU levels
+            여러 임계값들에 대해 correct한지 여부를 저장
         """
         if pred_kpts is not None and gt_kpts is not None:
             # `0.53` is from https://github.com/jin-s13/xtcocoapi/blob/master/xtcocotools/cocoeval.py#L384

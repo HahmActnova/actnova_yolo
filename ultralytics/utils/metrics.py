@@ -496,7 +496,21 @@ def ap_per_class(tp,
     fp = (tp / (p + eps) - tp).round()  # false positives
     return tp, fp, p, r, f1, ap, unique_classes.astype(int)
 
-
+def RMSE(true, pred):
+    """
+    pred_kpts: (array[N, 51])
+    tkpts: (array[N, 51])
+    """
+    acc = 0
+    N = np.shape(true)[0]
+    for i in N:
+        for j in range(51):
+            if j%3 != 0:
+                acc += (pred[i, j] - true[i, j]) ** 2
+    acc /= N
+    
+    return [np.sqrt(acc)]
+    
 class Metric(SimpleClass):
     """
         Class for computing evaluation metrics for YOLOv8 model.
@@ -824,7 +838,40 @@ class SegmentMetrics(SimpleClass):
     def results_dict(self):
         """Returns results of object detection model for evaluation."""
         return dict(zip(self.keys + ['fitness'], self.mean_results() + [self.fitness]))
+    
+class CustomMetric(SimpleClass):
+    
+    """
+    Class for computing evaluation custom metrics for YOLOv8 model.
+    
+    Attributes:
+        RMSE (list): RMSE for each class. Shape: (nc,).
+        nc (int): Number of classes.
+    """
+    
+    def __init__(self) -> None:
+        self.RMSE = []  # (nc, )
+        self.nc = 0
 
+    @property
+    def mRMSE(self):
+        """
+        Returns the Mean RMSE of all classes.
+
+        Returns:
+            (float): The mean RMSE of all classes.
+        """
+        return self.RMSE.mean() if len(self.RMSE) else 0.0
+    
+    def mean_result(self):
+        return self.mRMSE
+    
+    def class_result(self, i):
+        return self.mRMSE
+    
+    def update(self, results):
+        self.RMSE = results
+        
 
 class PoseMetrics(SegmentMetrics):
     """
@@ -904,6 +951,7 @@ class PoseMetrics(SegmentMetrics):
                                    prefix='Box')[2:]
         self.box.nc = len(self.names)
         self.box.update(results_box)
+        
 
     @property
     def keys(self):
@@ -967,6 +1015,7 @@ class ActnovaMetrics(SegmentMetrics):
         self.names = names
         self.box = Metric()
         self.pose = Metric()
+        self.RMSE = CustomMetric()
         self.speed = {'preprocess': 0.0, 'inference': 0.0, 'loss': 0.0, 'postprocess': 0.0}
 
     def __getattr__(self, attr):
@@ -974,7 +1023,7 @@ class ActnovaMetrics(SegmentMetrics):
         name = self.__class__.__name__
         raise AttributeError(f"'{name}' object has no attribute '{attr}'. See valid attributes below.\n{self.__doc__}")
 
-    def process(self, tp_b, tp_p, conf, pred_cls, target_cls):
+    def process(self, tp_b, tp_p, conf, pred_cls, target_cls, true_kpts, pred_kpts):
         """
         Processes the detection and pose metrics over the given set of predictions.
 
@@ -1008,6 +1057,10 @@ class ActnovaMetrics(SegmentMetrics):
                                    prefix='Box')[2:]
         self.box.nc = len(self.names)
         self.box.update(results_box)
+        
+        result_RMSE = RMSE(true_kpts, pred_kpts)
+        self.RMSE.update(result_RMSE)
+        
 
     @property
     def keys(self):
@@ -1019,11 +1072,11 @@ class ActnovaMetrics(SegmentMetrics):
 
     def mean_results(self):
         """Return the mean results of box and pose."""
-        return self.box.mean_results() + self.pose.mean_results()
+        return self.box.mean_results() + self.pose.mean_results() + self.RMSE.mean_result()
 
     def class_result(self, i):
         """Return the class-wise detection results for a specific class i."""
-        return self.box.class_result(i) + self.pose.class_result(i)
+        return self.box.class_result(i) + self.pose.class_result(i) + self.RMSE.mean_result(i)
 
     @property
     def maps(self):
