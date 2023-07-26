@@ -503,7 +503,7 @@ def RMSE(true, pred):
     """
     acc = 0
     N = np.shape(true)[0]
-    for i in N:
+    for i in range(N):
         for j in range(51):
             if j%3 != 0:
                 acc += (pred[i, j] - true[i, j]) ** 2
