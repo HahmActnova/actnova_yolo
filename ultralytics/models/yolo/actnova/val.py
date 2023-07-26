@@ -8,7 +8,7 @@ import torch
 from ultralytics.models.yolo.detect import DetectionValidator
 from ultralytics.utils import DEFAULT_CFG, LOGGER, ops
 from ultralytics.utils.checks import check_requirements
-from ultralytics.utils.metrics import OKS_SIGMA, PoseMetrics, box_iou, kpt_iou
+from ultralytics.utils.metrics import OKS_SIGMA, ActnovaMetrics, box_iou, kpt_iou
 from ultralytics.utils.plotting import output_to_target, plot_images
 
 
@@ -17,8 +17,8 @@ class ActnovaValidator(DetectionValidator):
     def __init__(self, dataloader=None, save_dir=None, pbar=None, args=None, _callbacks=None):
         """Initialize a 'PoseValidator' object with custom parameters and assigned attributes."""
         super().__init__(dataloader, save_dir, pbar, args, _callbacks)
-        self.args.task = 'pose'
-        self.metrics = PoseMetrics(save_dir=self.save_dir, on_plot=self.on_plot)
+        self.args.task = 'actnova'
+        self.metrics = ActnovaMetrics(save_dir=self.save_dir, on_plot=self.on_plot)
 
     def preprocess(self, batch):
         """Preprocesses the batch by converting the 'keypoints' data into a float and moving it to the device."""
@@ -28,8 +28,8 @@ class ActnovaValidator(DetectionValidator):
 
     def get_desc(self):
         """Returns description of evaluation metrics in string format."""
-        return ('%22s' + '%11s' * 10) % ('Class', 'Images', 'Instances', 'Box(P', 'R', 'mAP50', 'mAP50-95)', 'Pose(P',
-                                         'R', 'mAP50', 'mAP50-95)')
+        return ('%22s' + '%11s' * 11) % ('Class', 'Images', 'Instances', 'Box(P', 'R', 'mAP50', 'mAP50-95)', 'Pose(P',
+                                         'R', 'mAP50', 'mAP50-95', 'RMSE)')
 
     def postprocess(self, preds):
         """Apply non-maximum suppression and return detections with high confidence scores."""
