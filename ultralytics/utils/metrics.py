@@ -506,7 +506,7 @@ def RMSE(true, pred):
     mse = np.min(d, axis=1) / np.shape(true)[-1]
     rmse = np.sqrt(mse)
     
-    return [np.mean(rmse).item()]
+    return np.mean(rmse).item()
     
 class Metric(SimpleClass):
     """
@@ -847,7 +847,7 @@ class CustomMetric(SimpleClass):
     """
     
     def __init__(self) -> None:
-        self.RMSE = []  # (nc, )
+        self.RMSE = 0  # (nc, )
         self.nc = 0
 
     @property
@@ -861,10 +861,10 @@ class CustomMetric(SimpleClass):
         return self.RMSE.mean() if len(self.RMSE) else 0.0
     
     def mean_result(self):
-        return self.mRMSE
+        return self.RMSE
     
     def class_result(self, i):
-        return self.mRMSE
+        return self.RMSE
     
     def update(self, results):
         self.RMSE = results
@@ -959,11 +959,11 @@ class PoseMetrics(SegmentMetrics):
 
     def mean_results(self):
         """Return the mean results of box and pose."""
-        return self.box.mean_results() + self.pose.mean_results()
+        return self.box.mean_results() + [self.pose.mean_results()]
 
     def class_result(self, i):
         """Return the class-wise detection results for a specific class i."""
-        return self.box.class_result(i) + self.pose.class_result(i)
+        return self.box.class_result(i) + [self.pose.class_result(i)]
 
     @property
     def maps(self):
@@ -1073,7 +1073,7 @@ class ActnovaMetrics(SegmentMetrics):
 
     def class_result(self, i):
         """Return the class-wise detection results for a specific class i."""
-        return self.box.class_result(i) + self.pose.class_result(i) + self.RMSE.mean_result(i)
+        return self.box.class_result(i) + self.pose.class_result(i) + self.RMSE.class_result(i)
 
     @property
     def maps(self):
