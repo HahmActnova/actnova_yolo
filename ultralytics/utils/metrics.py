@@ -502,9 +502,12 @@ def RMSE(true, pred):
     tkpts: (array[N, 51])
     """
     acc = 0
+    
     N = np.shape(true)[0]
+    kpts = np.shape(true)[1]
+    
     for i in range(N):
-        for j in range(51):
+        for j in range(kpts):
             if j%3 != 0:
                 acc += (pred[i, j] - true[i, j]) ** 2
     acc /= N
