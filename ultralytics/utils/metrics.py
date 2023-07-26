@@ -503,8 +503,8 @@ def RMSE(true, pred):
     """
     acc = 0
     
-    N = np.shape(true)[0]
-    kpts = np.shape(true)[1]
+    N = np.min(np.shape(true)[0], np.shape(pred)[0])
+    kpts = np.min(np.shape(true)[1], np.shape(pred)[1])
     
     for i in range(N):
         for j in range(kpts):
