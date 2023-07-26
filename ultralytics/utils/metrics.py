@@ -959,11 +959,11 @@ class PoseMetrics(SegmentMetrics):
 
     def mean_results(self):
         """Return the mean results of box and pose."""
-        return self.box.mean_results() + [self.pose.mean_results()]
+        return self.box.mean_results() + self.pose.mean_results()
 
     def class_result(self, i):
         """Return the class-wise detection results for a specific class i."""
-        return self.box.class_result(i) + [self.pose.class_result(i)]
+        return self.box.class_result(i) + self.pose.class_result(i)
 
     @property
     def maps(self):
@@ -1069,11 +1069,11 @@ class ActnovaMetrics(SegmentMetrics):
 
     def mean_results(self):
         """Return the mean results of box and pose."""
-        return self.box.mean_results() + self.pose.mean_results() + self.RMSE.mean_result()
+        return self.box.mean_results() + self.pose.mean_results() + [self.RMSE.mean_result()]
 
     def class_result(self, i):
         """Return the class-wise detection results for a specific class i."""
-        return self.box.class_result(i) + self.pose.class_result(i) + self.RMSE.class_result(i)
+        return self.box.class_result(i) + self.pose.class_result(i) + [self.RMSE.class_result(i)]
 
     @property
     def maps(self):
