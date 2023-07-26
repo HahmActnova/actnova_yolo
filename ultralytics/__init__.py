@@ -1,6 +1,6 @@
 # Ultralytics YOLO 🚀, AGPL-3.0 license
 
-__version__ = '1.0.20'
+__version__ = '1.0.21'
 
 from ultralytics.engine.model import YOLO
 from ultralytics.hub import start
@@ -12,3 +12,4 @@ from ultralytics.utils.checks import check_yolo as checks
 from ultralytics.utils.downloads import download
 
 __all__ = '__version__', 'YOLO', 'NAS', 'SAM', 'FastSAM', 'RTDETR', 'checks', 'download', 'start', 'settings'  # allow simpler import
+
