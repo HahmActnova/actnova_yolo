@@ -501,7 +501,7 @@ def RMSE(true, pred):
     pred_kpts: (array[N, 51])
     tkpts: (array[N, 51])
     """
-    diff = true - pred
+    diff = (true[:, None, :, 0] - pred[..., 0]) ** 2 + (true[:, None, :, 1] - pred[..., 1]) ** 2
     diff_squared = diff ** 2
     mse = diff_squared.mean()
     rmse = np.sqrt(mse)
