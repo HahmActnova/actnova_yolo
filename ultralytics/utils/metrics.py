@@ -501,7 +501,7 @@ def RMSE(true, pred):
     pred_kpts: (array[N, 51])
     tkpts: (array[N, 51])
     """
-    diff = kpt1[:, None] - kpt2  # Broadcast to compare all combinations
+    diff = true[:, None] - pred  # Broadcast to compare all combinations
     squared_diff = torch.sum(diff ** 2, dim=-1)  # Calculate squared differences for each keypoint
     rmse = torch.sqrt(squared_diff).mean(-1)  # Calculate RMSE for each combination of keypoints
     return [rmse]
