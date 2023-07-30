@@ -72,7 +72,7 @@ class ActnovaValidator(DetectionValidator):
                         (2, 0), device=self.device), cls.squeeze(-1)))
                     if self.args.plots:
                         self.confusion_matrix.process_batch(detections=None, labels=cls.squeeze(-1))
-
+                    print("npr == 0")
                 continue
 
             # Predictions
@@ -82,6 +82,7 @@ class ActnovaValidator(DetectionValidator):
             ops.scale_boxes(batch['img'][si].shape[1:], predn[:, :4], shape,
                             ratio_pad=batch['ratio_pad'][si])  # native-space pred
             pred_kpts = predn[:, 6:].view(npr, nk, -1)
+            tkpts = pred_kpts.clone()  # target keypoints (currently, dump, yym)
             ops.scale_coords(batch['img'][si].shape[1:], pred_kpts, shape, ratio_pad=batch['ratio_pad'][si])
 
             # Evaluate
@@ -109,6 +110,7 @@ class ActnovaValidator(DetectionValidator):
             """
 
             # correct_boxes, correct_kpts, pconf, pcls, tcls, GT_kpts, pred_kpts
+            # Error 발생: UnboundLocalError: local variable 'tkpts' referenced before assignment
             self.stats.append((correct_bboxes, correct_kpts, pred[:, 4], pred[:, 5], cls.squeeze(-1), pred_kpts, tkpts))
 
             # Save
