@@ -67,10 +67,12 @@ class ActnovaValidator(DetectionValidator):
 
             if npr == 0:
                 if nl:
+                    # correct_boxes, correct_kpts, pconf, pcls, tcls, GT_kpts, pred_kpts
                     self.stats.append((correct_bboxes, correct_kpts, *torch.zeros(
                         (2, 0), device=self.device), cls.squeeze(-1)))
                     if self.args.plots:
                         self.confusion_matrix.process_batch(detections=None, labels=cls.squeeze(-1))
+
                 continue
 
             # Predictions
@@ -89,6 +91,8 @@ class ActnovaValidator(DetectionValidator):
                     (width, height, width, height), device=self.device)  # target boxes
                 ops.scale_boxes(batch['img'][si].shape[1:], tbox, shape,
                                 ratio_pad=batch['ratio_pad'][si])  # native-space labels
+
+                # keypoint related operations
                 tkpts = kpts.clone()
                 tkpts[..., 0] *= width
                 tkpts[..., 1] *= height
@@ -98,7 +102,7 @@ class ActnovaValidator(DetectionValidator):
                 correct_kpts = self._process_batch(predn[:, :6], labelsn, pred_kpts, tkpts)
                 if self.args.plots:
                     self.confusion_matrix.process_batch(predn, labelsn)
-                
+
             """
             pred_kpts: (array[N, 51])
             tkpts: (array[N, 51])
