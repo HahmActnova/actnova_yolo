@@ -12,6 +12,7 @@ import time
 from copy import deepcopy
 from datetime import datetime, timedelta
 from pathlib import Path
+from datetime import datetime, timedelta
 
 import numpy as np
 import torch
@@ -87,10 +88,28 @@ class BaseTrainer:
         self.metrics = None
         self.plots = {}
         init_seeds(self.args.seed + 1 + RANK, deterministic=self.args.deterministic)
+        
+        # Model and Dataset
+        self.model = self.args.model
+        try:
+            if self.args.task == 'classify':
+                self.data = check_cls_dataset(self.args.data)
+            elif self.args.data.endswith('.yaml') or self.args.task in ('detect', 'segment'):
+                self.data = check_det_dataset(self.args.data)
+                if 'yaml_file' in self.data:
+                    self.args.data = self.data['yaml_file']  # for validating 'yolo train data=url.zip' usage
+        except Exception as e:
+            raise RuntimeError(emojis(f"Dataset '{clean_url(self.args.data)}' error ❌ {e}")) from e
 
         # Dirs
         project = self.args.project or Path(SETTINGS['runs_dir']) / self.args.task
-        name = self.args.name or f'{self.args.mode}'
+        
+        # name = self.args.name or f'{self.args.mode}' # 기존에는 train으로 폴더 이름을 설정함
+        # 현재는 dataset이름
+        current_datetime = datetime.now() + timedelta(hours=9)
+        formatted_datetime = current_datetime.strftime('%Y-%m-%d_%H:%M')
+        name = f"{self.data['path'].name}_{formatted_datetime}"
+        
         if hasattr(self.args, 'save_dir'):
             self.save_dir = Path(self.args.save_dir)
         else:
@@ -113,18 +132,6 @@ class BaseTrainer:
         # Device
         if self.device.type == 'cpu':
             self.args.workers = 0  # faster CPU training as time dominated by inference, not dataloading
-
-        # Model and Dataset
-        self.model = self.args.model
-        try:
-            if self.args.task == 'classify':
-                self.data = check_cls_dataset(self.args.data)
-            elif self.args.data.endswith('.yaml') or self.args.task in ('detect', 'segment'):
-                self.data = check_det_dataset(self.args.data)
-                if 'yaml_file' in self.data:
-                    self.args.data = self.data['yaml_file']  # for validating 'yolo train data=url.zip' usage
-        except Exception as e:
-            raise RuntimeError(emojis(f"Dataset '{clean_url(self.args.data)}' error ❌ {e}")) from e
 
         self.trainset, self.testset = self.get_dataset(self.data)
         self.ema = None
