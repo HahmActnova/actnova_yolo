@@ -107,9 +107,8 @@ class BaseTrainer:
         # name = self.args.name or f'{self.args.mode}' # 기존에는 train으로 폴더 이름을 설정함
         # 현재는 dataset이름
         current_datetime = datetime.now() + timedelta(hours=9)
-        formatted_datetime = current_datetime.strftime('%Y-%m-%d_%H:%M')
-        name = f"{self.data['path'].name}_{formatted_datetime}"
-        print(name)
+        formatted_datetime = current_datetime.strftime('%Y.%m.%d_%H:%M')
+        name = f"{formatted_datetime}_{self.args.mode}_{self.data['path'].name}"
         
         # if hasattr(self.args, 'save_dir'):
         #     self.save_dir = Path(self.args.save_dir)
