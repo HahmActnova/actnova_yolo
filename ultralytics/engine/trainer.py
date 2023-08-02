@@ -110,11 +110,14 @@ class BaseTrainer:
         formatted_datetime = current_datetime.strftime('%Y-%m-%d_%H:%M')
         name = f"{self.data['path'].name}_{formatted_datetime}"
         
-        if hasattr(self.args, 'save_dir'):
-            self.save_dir = Path(self.args.save_dir)
-        else:
-            self.save_dir = Path(
-                increment_path(Path(project) / name, exist_ok=self.args.exist_ok if RANK in (-1, 0) else True))
+        # if hasattr(self.args, 'save_dir'):
+        #     self.save_dir = Path(self.args.save_dir)
+        # else:
+        #     self.save_dir = Path(
+        #         increment_path(Path(project) / name, exist_ok=self.args.exist_ok if RANK in (-1, 0) else True))
+            
+        self.save_dir = Path(increment_path(Path(project) / name, exist_ok=self.args.exist_ok if RANK in (-1, 0) else True))
+        
         self.wdir = self.save_dir / 'weights'  # weights dir
         if RANK in (-1, 0):
             self.wdir.mkdir(parents=True, exist_ok=True)  # make dir
